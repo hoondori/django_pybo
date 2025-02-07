@@ -2,6 +2,27 @@
 {$ load pybo_filter %}
 {% block content %}
 <div class="container my-3">
+    <!-- 정렬: 최신순, 인기순, 추천순 -->
+    <div class="col-2">
+        <select class="form-control so">
+            <option value="recent" {% if so == 'recent' %} selected {% endif %} >최신순</option>
+            <option value="recommend" {% if so == 'recommend' %} selected {% endif %} >추천순</option>
+            <option value="popular" {% if so == 'popular' %} selected {% endif %} >답변순</option>
+        </select>
+    </div>
+
+    <!-- 검색 -->
+    <div class="row justify-content-end my-3">
+        <div class="col-4 input-group">
+            <input type="text" class="form-control kw" value="{{ kw|default_if_none:''}}">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary"
+                        type="button" id="btn_search">찾기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 질문 목록 -->
     <table class="table">
         <thead>
         <tr class="text-center table-dark">
@@ -50,7 +71,7 @@
         <!-- 이전 페이지 -->
         {% if question_list.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ question_list.previous_page_number }}">이전</a>
+                <a class="page-link" data-page="{{ question_list.previous_page_number }}" href="#">이전</a>
             </li>
         {% else %}
             <li class="page-item disabled">
@@ -65,12 +86,12 @@
                 <!-- 현재 페이지 -->
                 {% if page_number == question_list.number %}
                     <li class="page-item active" aria-current="page">
-                        <a class="page-link" href="?page={{ page_number }}">{{page_number}}</a>
+                        <a class="page-link" data-page="{{ page_number }}" href="#">{{page_number}}</a>
                     </li>
                 <!-- 이외의 페이지 -->
                 {% else %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_number }}">{{page_number}}</a>
+                        <a class="page-link" data-page="{{ page_number }}" href="#">{{page_number}}</a>
                     </li>
                 {% endif %}
             {% endif %}
@@ -79,7 +100,7 @@
         <!-- 다음 페이지 -->
         {% if question_list.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ question_list.next_page_number }}">다음</a>
+                <a class="page-link" data-page="{{ question_list.next_page_number }}" href="#">다음</a>
             </li>
         {% else %}
             <li class="page-item disabled">
@@ -92,4 +113,32 @@
         질문 등록하기
     </a>
 </div>
+<!-- page 전환과 kw검색 event에 대해서 GET REQUET 처리 -->
+<form id="searchForm" method="get" action="{% url 'index' %}">
+    <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:''}}">
+    <input type="hidden" id="page" name="page" value="{{ page }}">
+    <input type="hidden" id="so" name="so" value="{{ so }}">
+</form>
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".page-link").on('click', function() {
+            $("#page").val($(this).data("page"));
+            $("#searchForm").submit();
+        });
+
+        $("#btn_search").on('click', function() {
+            $("#kw").val($(".kw").val());  // 검색입력창의 class=kw 를 id=kw로 셋팅
+            $("#page").val(1);             // id=page에 1셋팅
+            $("#searchForm").submit();
+        });
+
+        $(".so").on('change', function() {
+            $("#so").val($(this).val());
+            $("#page").val(1);
+            $("#searchForm").submit();
+        });
+    });
+</script>
 {% endblock %}
