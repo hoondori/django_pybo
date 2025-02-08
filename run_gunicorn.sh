@@ -1,0 +1,1 @@
+DJANGO_SETTINGS_MODULE=config.settings.product gunicorn --bind 0:8000 config.wsgi:application
