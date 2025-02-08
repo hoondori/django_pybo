@@ -1,0 +1,14 @@
+server {
+    listen 8011;
+    server_name 43.202.105.245;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /static {
+        alias /home/bitnami/projects/django_pybo/static;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/tmp/gunicorn.sock;
+    }
+}

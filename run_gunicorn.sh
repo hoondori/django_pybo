@@ -1,1 +1,1 @@
-DJANGO_SETTINGS_MODULE=config.settings.product gunicorn --bind 0:8000 config.wsgi:application
+DJANGO_SETTINGS_MODULE=config.settings.product gunicorn --bind unix:/tmp/gunicorn.sock config.wsgi:application
