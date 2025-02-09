@@ -21,9 +21,11 @@ def signup(request):
         form = UserForm()
     return render(request, 'common/signup.html', {'form': form})
 
-def page_not_found(request, expcetion):
+def page_not_found(request, *args, **kwargs):
     """
-    404 page not found
+    404 page not found.
+
+    // If I didn't add args and kwargs server get 500.
     """
 
     return render(request, 'common/404.html', {})
